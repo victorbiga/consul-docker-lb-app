@@ -39,7 +39,7 @@ The following software needs to be installed:
     ```
     $ docker ps
     CONTAINER ID        IMAGE                           COMMAND                  CREATED             STATUS              PORTS                                                                                                                                NAMES
-    aea80813b12d        consultemplatedemo_nginx        "/usr/bin/runsvdir /e"   3 days ago          Up 25 seconds       0.0.0.0:80->80/tcp, 443/tcp                                                                                                          nginx
+    aea80813b12d        consul-docker-lb-app_nginx        "/usr/bin/runsvdir /e"   3 days ago          Up 25 seconds       0.0.0.0:80->80/tcp, 443/tcp                                                                                                          nginx
     08c5a8cec952        gliderlabs/registrator:latest   "/bin/registrator -in"   3 days ago          Up 25 seconds                                                                                                                                            registrator
     5a7bf3bb3a25        progrium/consul                 "/bin/start -server -"   3 days ago          Up 26 seconds       53/tcp, 0.0.0.0:8300->8300/tcp, 0.0.0.0:8400->8400/tcp, 8301-8302/tcp, 0.0.0.0:8500->8500/tcp, 8301-8302/udp, 0.0.0.0:8600->53/udp   consul
     a95c766b8ab5        victorbiga/victor-hello-world   "nginx -g 'daemon off"   3 days ago          Up 25 seconds       443/tcp, 0.0.0.0:32846->80/tcp                                                                                                       consultemplatedemo_http_1
@@ -55,18 +55,18 @@ From here you can scale up the http service:
 
 ```
 $ docker-compose scale http=5
-Creating and starting consultemplatedemo_http_2 ... done
-Creating and starting consultemplatedemo_http_3 ... done
-Creating and starting consultemplatedemo_http_4 ... done
-Creating and starting consultemplatedemo_http_5 ... done
+Creating and starting consul-docker-lb-app_http_2 ... done
+Creating and starting consul-docker-lb-app_http_3 ... done
+Creating and starting consul-docker-lb-app_http_4 ... done
+Creating and starting consul-docker-lb-app_http_5 ... done
 ```
 
 Scale it down:
 
 ```
 $ docker-compose scale http=3
-Stopping and removing consultemplatedemo_http_4 ... done
-Stopping and removing consultemplatedemo_http_5 ... done
+Stopping and removing consul-docker-lb-app_http_4 ... done
+Stopping and removing consul-docker-lb-app_http_5 ... done
 ```
 
 All the changes should be automatically reflected in the NGINX config file (/etc/nginx/conf.d/app.conf) inside the NGINX container.
@@ -76,8 +76,8 @@ Another feature we are using here is the HTTP health checks with Consul. Registr
 So lets stop a container and see if it gets removed from the load balancing pool
 
 ```
-$ docker stop consultemplatedemo_http_2
-consultemplatedemo_http_2
+$ docker stop consul-docker-lb-app_http_2
+consul-docker-lb-app_http_2
 ```
 
 On the Consul UI page (http://<HOST-IP>:8500/ui/#/dc1/services/http), you will observe the change and the container removed. Also the NGINX config file (`/etc/nginx/conf.d/app.conf`) will have just 2 server entries now indicating that the 3rd server entry corresponding to the container which was stopped was removed automatically.
